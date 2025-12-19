@@ -29,14 +29,14 @@ while True:
         print("Please enter only whole numbers with no other spaces or symbols.")
 start = t.perf_counter()  # start benchmark timer
 
-def assign_course_maximums(maximums, course_names):
+def assign_course_maximums(maximums: dict, course_names: list) -> list:
     # maximums is a dictionary of {course name: student maximum}
     return [Course(i, maximums[i]) for i in course_names if "_" not in i]
     # returns a list of objects
     # relies on on names in maximums matching names in course_names
 
 # Create aditional columns for flags
-def create_flag_column(data, flag_dict, message, score_type, dict_students):
+def create_flag_column(data: dict, flag_dict: dict, message: str, score_type: str, dict_students: dict) -> dict:
     if score_type == "Rank":
         data.update({message:
                          [f"{key}:  [{value}]  {score_type} [{dict_students[key].preferences[value]}]"
@@ -50,10 +50,10 @@ def create_flag_column(data, flag_dict, message, score_type, dict_students):
     return data
 
 # Find a mean of all student satisfaction scores
-def get_base_course_name (name):
+def get_base_course_name (name: str) -> str:
     return name.split(".")[0]
 
-def avg_sat_score(students):
+def avg_sat_score(students: list) -> float:
     mean_score = 0
     student_count = 0
     for student in students:
@@ -65,7 +65,7 @@ def avg_sat_score(students):
 
 class Student:
 
-    def __init__(self, info):
+    def __init__(self, info: dict) -> None:
         try:
             self.name = info.pop("Student Name")
             self.name = self.name[0].upper() + self.name[1:]
@@ -87,7 +87,7 @@ class Student:
 
 class Course:
 
-    def __init__(self, name, max_students):
+    def __init__(self, name: str, max_students: int) -> None:
         self.name = name
         self.max_students = max_students
         self.assigned_students = []
