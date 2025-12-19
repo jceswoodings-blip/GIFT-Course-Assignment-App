@@ -7,12 +7,12 @@ def Remove_last_names(name):
     parts = name.split(" ")
     if parts[0].capitalize() == "Angus":
         parts[0] = "Gus"
-    return parts[0].capitalize()
+    return f"{parts[0].capitalize()} {parts[1][0].upper()}" if len(parts) > 1 else parts[0].capitalize()
 
 
 path_to_use = ""
 while path_to_use == "" or path_to_use == " ":
-    path_to_use = (input("please paste the file path of the file you want to process here:")
+    path_to_use = (input("Please paste the file path of the file you want to process here:")
                    .strip().replace("\"", ""))
 df = pd.read_csv(fr"{path_to_use}")
 df = df.fillna(" ")
