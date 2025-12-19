@@ -1,6 +1,6 @@
 class Student:
 
-    def __init__(self, info):
+    def __init__(self, info: dict) -> None:
         try:
             self.name = info.pop("Student Name")
             self.name = self.name[0].upper() + self.name[1:]
@@ -22,7 +22,7 @@ class Student:
 
 class Course:
 
-    def __init__(self, name, max_students):
+    def __init__(self, name: str, max_students: int) -> None:
         self.name = name
         self.max_students = max_students
         self.assigned_students = []

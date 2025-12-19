@@ -4,6 +4,10 @@ import random
 import sys
 import time as t
 
+from JSON import load_config
+
+config = load_config('Config.json')
+
 
 df = pd.read_csv(r"C:\Users\JcesW\Desktop\October 2025 weeker crunch sheet v2.csv")  # df is short for DataFrame
 # Should ask user to input file path instead of hardcoding it (config file?)
