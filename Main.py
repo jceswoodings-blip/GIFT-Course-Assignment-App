@@ -22,9 +22,9 @@ df_dict = {}  # dictionary to store dataframes and satisfaction scores of each a
 print("Welcome to the Gift/P4HE Course assignment program.")
 # command = str(input("Enter RUN to run and OPTIONS to open the options menu"))  # future feature?
 while True:
-    sample_size = input("Enter a number of attempts (100000 recommended): ")
-    if sample_size.isdigit():
-        sample_size = int(sample_size)
+    number_of_simulations = input("Enter a number of attempts (100000 recommended): ")
+    if number_of_simulations.isdigit():
+        number_of_simulations = int(number_of_simulations)
         break
     else:
         print("Please enter only whole numbers with no other spaces or symbols.")
@@ -63,6 +63,7 @@ def avg_sat_score(students: list) -> float:
     mean_score = round(float(mean_score / student_count), 3)
     return mean_score
 
+# Creating all objects, sorting courses into time slots, creating dictionaries for objects to be accessed via name
 course_times = [[]] # 2D list of courses, each sublist is a time slot containing all courses in that slot
 all_courses = []    # list of course objects
 students = []       # list of student objects
@@ -88,11 +89,17 @@ dict_courses = {course_object.name: course_object for course_object in all_cours
 dict_students = {student_object.name: student_object for student_object in students}
 # all course/student objects can be accessed by their name attributes  /\
 # =====================================================================================================================
-# Creating all objects, sorting courses into time slots, creating dictionaries for objects to be accessed via name
-for iteration_count in range(0, sample_size):
 
-    sys.stdout.write(f"\r{iteration_count + 1} samples created   {((iteration_count+1)/sample_size)*100:.2f}% Complete")  # doesn't force newline
+for simulation in range(0, number_of_simulations):
+
+    sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
     sys.stdout.flush()  # Ensure it appears immediately
+
+    # Reset objects for this iteration
+    for student in students:
+        student.reset()
+    for course in all_courses:
+        course.reset()
 
     # =====================================================================================================================
     # Find best course for each student in each time slot, remove full courses as options when needed.
@@ -100,19 +107,16 @@ for iteration_count in range(0, sample_size):
 
     random.shuffle(students)
     full_classes = set()  # set of course names which are full
-    courses_to_remove = []                            # streamline removal of full classes?
     rank_flags = []
     satisfaction_score_flags = []
     for student in students:
         random.shuffle(course_times)
         for time in course_times:  # for each time slot
             available_courses = []  # list of course objects available to this student in this time slot
-            courses_to_remove.clear()  # don't need to be removed again
 
             for course_name in time:  # for each course that is in that time slot
                 if dict_courses[course_name].student_count >= int(dict_courses[course_name].max_students):  # if class full
                     full_classes.add(course_name)
-                    courses_to_remove.append(course_name)
                 elif get_base_course_name (course_name) in student.assigned_courses:
                     pass
                 elif course_name not in full_classes:
@@ -185,12 +189,12 @@ for iteration_count in range(0, sample_size):
         df_dict.update({avg_sat_score(students): data})
 
     
-    for course in all_courses:
-        course.assigned_students.clear()
-        course.student_count = 0
-    for student in students:
-        student.assigned_courses.clear()
-        student.satisfaction_score = 0
+    # for course in all_courses:
+    #     course.assigned_students.clear()
+    #     course.student_count = 0
+    # for student in students:
+    #     student.assigned_courses.clear()
+    #     student.satisfaction_score = 0
     
   
 
