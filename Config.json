@@ -1,5 +1,5 @@
 {
-    "Sample_Size": 100000,
+    "number_of_simulations": 100000,
     "Source_File_Path": "Course Preferences.csv",
     "Output_File_Path": "Course Assignments.csv",
     "Rank_Flag_Threshold": 5,
