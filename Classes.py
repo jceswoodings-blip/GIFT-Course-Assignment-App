@@ -1,6 +1,7 @@
 class Student:
 
     def __init__(self, info: dict) -> None:
+        # info is a dictionary which contains {column_name : value, ...} for this student
         try:
             self.name = info.pop("Student Name")
             self.name = self.name[0].upper() + self.name[1:]
@@ -13,9 +14,8 @@ class Student:
                     pass
                 else:
                     processed_info.update({key: value})
-            # .pop() removes the specified item (or last if blank), and returns the value removed
             self.preferences = {key: int(value) for key, value in processed_info.items()}
-            # info is a dictionary, formatted =  course_name : preference
+            # preferences is dict  {course_name : preference_score, ...} for this student
         except ValueError:
             pass
 
