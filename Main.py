@@ -63,7 +63,30 @@ def avg_sat_score(students: list) -> float:
     mean_score = round(float(mean_score / student_count), 3)
     return mean_score
 
+course_times = [[]] # 2D list of courses, each sublist is a time slot containing all courses in that slot
+all_courses = []    # list of course objects
+students = []       # list of student objects
 
+for course in df.columns[1:].tolist():  # sort courses into time slot groups by '_' divisions
+    if "_" in course:
+        course_times.append([])  # create new time slot
+    else:
+        course_times[-1].append(course)  # add to latest time slot
+        all_courses.append(course)
+
+for i, series in df.iloc[:-1].iterrows():  # creates all student objects
+    student_dict = series.to_dict()
+    students.append(Student(student_dict))
+
+maximums = df.iloc[-1, 1:].replace({"none": "16"}, regex=True)  # last row contains maximums for each course
+# pandas series use the course names as indices and the maximums as values
+# 16 is limit for any course if none specified
+maximums = maximums.to_dict()  # pandas series to dictionary   {course name: maximum students}
+all_courses = assign_course_maximums(maximums, all_courses)  # now list of course objects
+
+dict_courses = {course_object.name: course_object for course_object in all_courses}
+dict_students = {student_object.name: student_object for student_object in students}
+# all course/student objects can be accessed by their name attributes  /\
 # =====================================================================================================================
 # Creating all objects, sorting courses into time slots, creating dictionaries for objects to be accessed via name
 for iteration_count in range(0, sample_size):
@@ -71,37 +94,12 @@ for iteration_count in range(0, sample_size):
     sys.stdout.write(f"\r{iteration_count + 1} samples created   {((iteration_count+1)/sample_size)*100:.2f}% Complete")  # doesn't force newline
     sys.stdout.flush()  # Ensure it appears immediately
 
-    course_times = [[]] # 2D list of courses, each sublist is a time slot containing all courses in that slot
-    all_courses = []    # list of course objects
-    students = []       # list of student objects
-
-    for course in df.columns[1:].tolist():  # sort courses into time slot groups by '_' divisions
-        if "_" in course:
-            course_times.append([])  # create new time slot
-        else:
-            course_times[-1].append(course)  # add to latest time slot
-            all_courses.append(course)
-
-    for i, series in df.iloc[:-1].iterrows():  # creates all student objects
-        student_dict = series.to_dict()
-        students.append(Student(student_dict))
-
-    maximums = df.iloc[-1, 1:].replace({"none": "16"}, regex=True)  # last row contains maximums for each course
-    # pandas series use the course names as indices and the maximums as values
-    # 16 is limit for any course if none specified
-    maximums = maximums.to_dict()  # pandas series to dictionary   {course name: maximum students}
-    all_courses = assign_course_maximums(maximums, all_courses)  # now list of course objects
-
-    dict_courses = {course_object.name: course_object for course_object in all_courses}
-    dict_students = {student_object.name: student_object for student_object in students}
-    # all course/student objects can be accessed by their name attributes  /\
-
     # =====================================================================================================================
     # Find best course for each student in each time slot, remove full courses as options when needed.
     # Flags low satisfaction or low rankings.
 
     random.shuffle(students)
-    full_classes = []
+    full_classes = set()  # set of course names which are full
     courses_to_remove = []                            # streamline removal of full classes?
     rank_flags = []
     satisfaction_score_flags = []
@@ -113,12 +111,14 @@ for iteration_count in range(0, sample_size):
 
             for course_name in time:  # for each course that is in that time slot
                 if dict_courses[course_name].student_count >= int(dict_courses[course_name].max_students):  # if class full
-                    full_classes.append(course_name)
+                    full_classes.add(course_name)
                     courses_to_remove.append(course_name)
                 elif get_base_course_name (course_name) in student.assigned_courses:
                     pass
-                else:
+                elif course_name not in full_classes:
                     available_courses.append(dict_courses[course_name])  # if in time slot and not full, make it availible
+                else:
+                    pass  
             student_preferences = []
 
             for course in available_courses:
@@ -144,8 +144,6 @@ for iteration_count in range(0, sample_size):
                 best_course.student_count += 1
                 student.satisfaction_score += best_preference
                 break
-            for course in courses_to_remove:  # remove all full courses, so they can't be iterated in future
-                time.remove(course)
 
     for student in students:
         # print(f"Test: {student.name}   SatScore: {student.satisfaction_score}")
@@ -185,6 +183,15 @@ for iteration_count in range(0, sample_size):
         except KeyError:  # no participants for course
             value.append("")
         df_dict.update({avg_sat_score(students): data})
+
+    
+    for course in all_courses:
+        course.assigned_students.clear()
+        course.student_count = 0
+    for student in students:
+        student.assigned_courses.clear()
+        student.satisfaction_score = 0
+    
   
 
 print()
