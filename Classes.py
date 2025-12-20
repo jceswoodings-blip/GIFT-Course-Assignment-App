@@ -27,6 +27,11 @@ class Student:
         except ValueError:
             pass
 
+    def reset(self):
+        """Reset the student's state for a new simulation run."""
+        self.satisfaction_score = 0
+        self.assigned_courses.clear()
+
 
 class Course:
 
@@ -42,5 +47,10 @@ class Course:
     def __init__(self, name: str, max_students: int) -> None:
         self.name = name
         self.max_students = max_students
+        self.assigned_students = []
+        self.student_count = 0
+
+    def reset(self):
+        """Reset the course's state for a new simulation run."""
         self.assigned_students = []
         self.student_count = 0
