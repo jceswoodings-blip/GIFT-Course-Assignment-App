@@ -1,4 +1,12 @@
 class Student:
+    """
+    Represents a Student.
+    Attributes:
+        name (str): The name of the student.
+        assigned_courses (set): Set of course names for course objects the student is in.
+        satisfaction_score (int): Cumulative satisfaction score based on assigned courses.
+        preferences (dict): Assosiates course names with student preference score for that course {course_name : preference_score, ...}.
+    """
 
     def __init__(self, info: dict) -> None:
         # info is a dictionary which contains {column_name : value, ...} for this student
@@ -21,6 +29,15 @@ class Student:
 
 
 class Course:
+
+    """
+    Represents a Course.
+    Attributes:
+        name (str): The name of the course.
+        max_students (int): The maximum number of students allowed in the course.
+        assigned_students (list): List of student names assigned to this course.
+        student_count (int): Current number of students assigned to this course.
+    """
 
     def __init__(self, name: str, max_students: int) -> None:
         self.name = name
