@@ -1,9 +1,9 @@
 {
-    "number_of_simulations": 100000,
-    "Source_File_Path": "Course Preferences.csv",
-    "Output_File_Path": "Course Assignments.csv",
-    "Rank_Flag_Threshold": 5,
-    "Permit_samples_with_rank_flag": true,
-    "Permit_samples_with_satisfaction_flag": true
+    "number_of_simulations": 10000,
+    "source_file_path": "C:\\Users\\JcesW\\Desktop\\October 2025 weeker crunch sheet v2.csv",
+    "output_file_path": "Course Assignments.csv",
+    "rank_flag_threshold": 5,
+    "permit_samples_with_rank_flag": true,
+    "permit_samples_with_satisfaction_flag": true
 
 }
