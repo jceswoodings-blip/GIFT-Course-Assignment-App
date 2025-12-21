@@ -29,16 +29,16 @@ def avg_sat_score(students: list) -> float:
 
 
 
-def assignment_simulation(course_times: list, all_courses: list, students: list, 
-                         number_of_simulations: int, simulation: int, df_dict: dict, 
+def run_assignment_simulation(course_times: list, all_courses: list, students: list, 
+                         df_dict: dict, 
                          dict_courses: dict, dict_students: dict) -> dict:
     
     
-    # dict_courses = {course_object.name: course_object for course_object in all_courses}
-    # dict_students = {student_object.name: student_object for student_object in students}
+    dict_courses = {course_object.name: course_object for course_object in all_courses}
+    dict_students = {student_object.name: student_object for student_object in students}
 
-    sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
-    sys.stdout.flush()  # Ensure it appears immediately
+    # sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
+    # sys.stdout.flush()  # Ensure it appears immediately
 
     # Reset objects for this iteration
     for student in students:

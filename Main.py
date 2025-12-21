@@ -6,6 +6,7 @@ import time as t
 
 from JSON import load_config
 from data_loader import load_data
+from assignment_algorithm import run_assignment_simulation
 
 
 # Create aditional columns for flags
@@ -57,106 +58,105 @@ dict_courses = {course_object.name: course_object for course_object in all_cours
 dict_students = {student_object.name: student_object for student_object in students}
 
 for simulation in range(0, number_of_simulations):
-
-    # df_dict = assignment_simulation(course_times, all_courses, students, 
-    #                                 number_of_simulations, simulation, df_dict, 
-    #                                 dict_courses, dict_students)
-
     sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
     sys.stdout.flush()  # Ensure it appears immediately
-
-    # Reset objects for this iteration
-    for student in students:
-        student.reset()
-    for course in all_courses:
-        course.reset()
-
-    # =====================================================================================================================
-    # Find best course for each student in each time slot, remove full courses as options when needed.
-    # Flags low satisfaction or low rankings.
-
-    random.shuffle(students)
-    full_classes = set()  # set of course names which are full
-    rank_flags = []
-    satisfaction_score_flags = []
-    for student in students:
-        random.shuffle(course_times)
-        for time in course_times:  # for each time slot
-            available_courses = []  # list of course objects available to this student in this time slot
-
-            for course_name in time:  # for each course that is in that time slot
-                if dict_courses[course_name].student_count >= int(dict_courses[course_name].max_students):  # if class full
-                    full_classes.add(course_name)
-                elif get_base_course_name (course_name) in student.assigned_courses:
-                    pass
-                elif course_name not in full_classes:
-                    available_courses.append(dict_courses[course_name])  # if in time slot and not full, make it availible
-                else:
-                    pass  
-            student_preferences = []
-
-            for course in available_courses:
-                student_preferences.append(student.preferences[course.name])
-                # add to list the student's preference for this course
-
-    # =====================================================================================================================
-    # Assign best course for this time slot (no duplicates), update relevant course and student objects
-            while True:
-                best_preference = min(student_preferences)
-                keys = [k for k, v in student.preferences.items() if v == best_preference]  # list of course names matching best preference
-                best_course = None
-
-                for key in keys:  # figuring out which preference match is happening in this time slot
-                    if key in time:
-                        best_course = dict_courses[key]  # best_course is the course object
-                        break
-
-                student.assigned_courses.add(get_base_course_name (best_course.name))
-                if best_preference >= 5:
-                    rank_flags.append({student.name: best_course.name})
-                best_course.assigned_students.append(student.name)
-                best_course.student_count += 1
-                student.satisfaction_score += best_preference
-                break
-
-    for student in students:
-        # print(f"Test: {student.name}   SatScore: {student.satisfaction_score}")
-        if student.satisfaction_score > 2*int(len(course_times))+2:  # 2 x time slots + 2
-            satisfaction_score_flags.append({student.name: student.satisfaction_score})
-
-
-    # =====================================================================================================================
-    # Potentially add new algorithm to ensure courses are not underfilled.
-
-    # =====================================================================================================================
-    # Show course counts, show flags, create DataFrame from data, convert to CSV
-
-    data = {}  # dictionary to make DataFrame   {Course name: [list of participants] ...}
-    for course in all_courses:
-        data.update({course.name: [student for student in course.assigned_students]})
-
-    for key, value in data.items():
-        value.sort()  # sort participant names alphabetically
-
-    data = create_flag_column(
-        data, rank_flags, "FLAG - rank 5 or worse:", "Rank", dict_students
-    )  
-    data = create_flag_column(
-        data, satisfaction_score_flags, "FLAG - Poor satisfaction score:", "Score", dict_students
-    )  # add flag columns if needed
+    df_dict = run_assignment_simulation(course_times, all_courses, students, df_dict, 
+                                        dict_courses, dict_students)
 
     
-    longest_student_list = max(len(data[value]) for value in data)  # values in "data" are the list of participants
 
-    # buffer lengths of all lists in dictionary to be equal for DataFrame creation
-    for key, value in data.items():
-        while len(value) < longest_student_list:
-            value.append("")
-        try:
-            value.append(dict_courses[key].student_count)  # display the number of students in the class
-        except KeyError:  # no participants for course
-            value.append("")
-        df_dict.update({avg_sat_score(students): data})
+#     # Reset objects for this iteration
+#     for student in students:
+#         student.reset()
+#     for course in all_courses:
+#         course.reset()
+
+#     # =====================================================================================================================
+#     # Find best course for each student in each time slot, remove full courses as options when needed.
+#     # Flags low satisfaction or low rankings.
+
+#     random.shuffle(students)
+#     full_classes = set()  # set of course names which are full
+#     rank_flags = []
+#     satisfaction_score_flags = []
+#     for student in students:
+#         random.shuffle(course_times)
+#         for time in course_times:  # for each time slot
+#             available_courses = []  # list of course objects available to this student in this time slot
+
+#             for course_name in time:  # for each course that is in that time slot
+#                 if dict_courses[course_name].student_count >= int(dict_courses[course_name].max_students):  # if class full
+#                     full_classes.add(course_name)
+#                 elif get_base_course_name (course_name) in student.assigned_courses:
+#                     pass
+#                 elif course_name not in full_classes:
+#                     available_courses.append(dict_courses[course_name])  # if in time slot and not full, make it availible
+#                 else:
+#                     pass  
+#             student_preferences = []
+
+#             for course in available_courses:
+#                 student_preferences.append(student.preferences[course.name])
+#                 # add to list the student's preference for this course
+
+#     # =====================================================================================================================
+#     # Assign best course for this time slot (no duplicates), update relevant course and student objects
+#             while True:
+#                 best_preference = min(student_preferences)
+#                 keys = [k for k, v in student.preferences.items() if v == best_preference]  # list of course names matching best preference
+#                 best_course = None
+
+#                 for key in keys:  # figuring out which preference match is happening in this time slot
+#                     if key in time:
+#                         best_course = dict_courses[key]  # best_course is the course object
+#                         break
+
+#                 student.assigned_courses.add(get_base_course_name (best_course.name))
+#                 if best_preference >= 5:
+#                     rank_flags.append({student.name: best_course.name})
+#                 best_course.assigned_students.append(student.name)
+#                 best_course.student_count += 1
+#                 student.satisfaction_score += best_preference
+#                 break
+
+#     for student in students:
+#         # print(f"Test: {student.name}   SatScore: {student.satisfaction_score}")
+#         if student.satisfaction_score > 2*int(len(course_times))+2:  # 2 x time slots + 2
+#             satisfaction_score_flags.append({student.name: student.satisfaction_score})
+
+
+#     # =====================================================================================================================
+#     # Potentially add new algorithm to ensure courses are not underfilled.
+
+#     # =====================================================================================================================
+#     # Show course counts, show flags, create DataFrame from data, convert to CSV
+
+#     data = {}  # dictionary to make DataFrame   {Course name: [list of participants] ...}
+#     for course in all_courses:
+#         data.update({course.name: [student for student in course.assigned_students]})
+
+#     for key, value in data.items():
+#         value.sort()  # sort participant names alphabetically
+
+#     data = create_flag_column(
+#         data, rank_flags, "FLAG - rank 5 or worse:", "Rank", dict_students
+#     )  
+#     data = create_flag_column(
+#         data, satisfaction_score_flags, "FLAG - Poor satisfaction score:", "Score", dict_students
+#     )  # add flag columns if needed
+
+    
+#     longest_student_list = max(len(data[value]) for value in data)  # values in "data" are the list of participants
+
+#     # buffer lengths of all lists in dictionary to be equal for DataFrame creation
+#     for key, value in data.items():
+#         while len(value) < longest_student_list:
+#             value.append("")
+#         try:
+#             value.append(dict_courses[key].student_count)  # display the number of students in the class
+#         except KeyError:  # no participants for course
+#             value.append("")
+#         df_dict.update({avg_sat_score(students): data})
 
 
 print()
