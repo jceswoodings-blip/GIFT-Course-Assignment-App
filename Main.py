@@ -58,6 +58,10 @@ dict_students = {student_object.name: student_object for student_object in stude
 
 for simulation in range(0, number_of_simulations):
 
+    # df_dict = assignment_simulation(course_times, all_courses, students, 
+    #                                 number_of_simulations, simulation, df_dict, 
+    #                                 dict_courses, dict_students)
+
     sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
     sys.stdout.flush()  # Ensure it appears immediately
 
