@@ -5,14 +5,8 @@ import sys
 import time as t
 
 from JSON import load_config
-from Classes import Student, Course
 from data_loader import load_data
 
-def assign_course_maximums(maximums: dict, course_names: list) -> list:
-    # maximums is a dictionary of {course name: student maximum}
-    return [Course(i, maximums[i]) for i in course_names if "_" not in i]
-    # returns a list of objects
-    # relies on on names in maximums matching names in course_names
 
 # Create aditional columns for flags
 def create_flag_column(data: dict, flag_dict: dict, message: str, score_type: str, dict_students: dict) -> dict:
