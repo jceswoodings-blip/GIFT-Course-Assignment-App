@@ -6,6 +6,7 @@ import time as t
 
 from JSON import load_config
 from Classes import Student, Course
+from data_loader import load_data
 
 def assign_course_maximums(maximums: dict, course_names: list) -> list:
     # maximums is a dictionary of {course name: student maximum}
@@ -43,26 +44,26 @@ def avg_sat_score(students: list) -> float:
 config = load_config('Config.json')
 
 
-df = pd.read_csv(r"C:\Users\JcesW\Desktop\October 2025 weeker crunch sheet v2.csv")  # df is short for DataFrame
+df = pd.read_csv(f"{config["source_file_path"]}")  # df is short for DataFrame
 # Should ask user to input file path instead of hardcoding it (config file?)
 
 df.iloc[:, 1:] = df.iloc[:, 1:].replace({"st|nd|rd|th": ""}, regex=True)   # replaces suffixes in preference values
 df.columns = df.columns.str.replace(r"Question| \[|\[|\]", "", regex=True)  # replaces wierd stuff in column names
 # print(df.columns)  # debug
 # print(df)          # debug
-df_dict = {}  # dictionary to store dataframes and satisfaction scores of each attempt  { avg satisfaction score : dataframe }
 
 print("Welcome to the Gift/P4HE Course assignment program.")
 # command = str(input("Enter RUN to run and OPTIONS to open the options menu"))  # future feature?
-while True:
-    number_of_simulations = input("Enter a number of attempts (100000 recommended): ")
-    if number_of_simulations.isdigit():
-        number_of_simulations = int(number_of_simulations)
-        break
-    else:
-        print("Please enter only whole numbers with no other spaces or symbols.")
+# while True:
+#     number_of_simulations = input("Enter a number of attempts (100000 recommended): ")
+#     if number_of_simulations.isdigit():
+#         number_of_simulations = int(number_of_simulations)
+#         break
+#     else:
+#         print("Please enter only whole numbers with no other spaces or symbols.")
 start = t.perf_counter()  # start benchmark timer
-
+number_of_simulations = config["number_of_simulations"]
+input("Press Enter to start simulation...")
 
 
 # Creating all objects, sorting courses into time slots, creating dictionaries for objects to be accessed via name
@@ -87,10 +88,11 @@ maximums = df.iloc[-1, 1:].replace({"none": "16"}, regex=True)  # last row conta
 maximums = maximums.to_dict()  # pandas series to dictionary   {course name: maximum students}
 all_courses = assign_course_maximums(maximums, all_courses)  # now list of course objects
 
-dict_courses = {course_object.name: course_object for course_object in all_courses}
-dict_students = {student_object.name: student_object for student_object in students}
 # all course/student objects can be accessed by their name attributes  /\
 # =====================================================================================================================
+df_dict = {}  # dictionary to store dataframes and satisfaction scores of each attempt  { avg satisfaction score : dataframe }
+dict_courses = {course_object.name: course_object for course_object in all_courses}
+dict_students = {student_object.name: student_object for student_object in students}
 
 for simulation in range(0, number_of_simulations):
 
