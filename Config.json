@@ -1,5 +1,5 @@
 {
-    "number_of_simulations": 10000,
+    "number_of_simulations": 100000,
     "source_file_path": "C:\\Users\\JcesW\\Desktop\\October 2025 weeker crunch sheet v2.csv",
     "output_file_path": "Course Assignments.csv",
     "rank_flag_threshold": 5,
