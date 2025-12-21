@@ -41,52 +41,20 @@ def avg_sat_score(students: list) -> float:
     mean_score = round(float(mean_score / student_count), 3)
     return mean_score
 
+print("Welcome to the GIFT Course Assignment Simulator.")
+print("Please ensure that configurations in 'Config.json' are correct and saved before proceeding.")
+input("Press Enter to begin...")
+print("\nPlease wait while simulations are run. To abort, press Ctrl + C\n")
+
+start = t.perf_counter()
 config = load_config('Config.json')
-
-
-df = pd.read_csv(f"{config["source_file_path"]}")  # df is short for DataFrame
-# Should ask user to input file path instead of hardcoding it (config file?)
-
-df.iloc[:, 1:] = df.iloc[:, 1:].replace({"st|nd|rd|th": ""}, regex=True)   # replaces suffixes in preference values
-df.columns = df.columns.str.replace(r"Question| \[|\[|\]", "", regex=True)  # replaces wierd stuff in column names
-# print(df.columns)  # debug
-# print(df)          # debug
-
-print("Welcome to the Gift/P4HE Course assignment program.")
-# command = str(input("Enter RUN to run and OPTIONS to open the options menu"))  # future feature?
-# while True:
-#     number_of_simulations = input("Enter a number of attempts (100000 recommended): ")
-#     if number_of_simulations.isdigit():
-#         number_of_simulations = int(number_of_simulations)
-#         break
-#     else:
-#         print("Please enter only whole numbers with no other spaces or symbols.")
-start = t.perf_counter()  # start benchmark timer
 number_of_simulations = config["number_of_simulations"]
-input("Press Enter to start simulation...")
 
+loaded_data = load_data(config["source_file_path"])
 
-# Creating all objects, sorting courses into time slots, creating dictionaries for objects to be accessed via name
-course_times = [[]] # 2D list of courses, each sublist is a time slot containing all courses in that slot
-all_courses = []    # list of course objects
-students = []       # list of student objects
-
-for course in df.columns[1:].tolist():  # sort courses into time slot groups by '_' divisions
-    if "_" in course:
-        course_times.append([])  # create new time slot
-    else:
-        course_times[-1].append(course)  # add to latest time slot
-        all_courses.append(course)
-
-for i, series in df.iloc[:-1].iterrows():  # creates all student objects
-    student_dict = series.to_dict()
-    students.append(Student(student_dict))
-
-maximums = df.iloc[-1, 1:].replace({"none": "16"}, regex=True)  # last row contains maximums for each course
-# pandas series use the course names as indices and the maximums as values
-# 16 is limit for any course if none specified
-maximums = maximums.to_dict()  # pandas series to dictionary   {course name: maximum students}
-all_courses = assign_course_maximums(maximums, all_courses)  # now list of course objects
+course_times = loaded_data[0] # 2D list of courses, each sublist is a time slot containing all courses in that slot
+all_courses = loaded_data[1]   # list of course objects
+students = loaded_data[2]       # list of student objects
 
 # all course/student objects can be accessed by their name attributes  /\
 # =====================================================================================================================
