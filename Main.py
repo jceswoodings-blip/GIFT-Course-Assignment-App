@@ -1,10 +1,10 @@
-import pandas as pd
 import sys
 import time as t
 
 from JSON import load_config
 from data_loader import load_data
 from assignment_algorithm import run_assignment_simulation
+from get_output import get_csv_output
 
 
 print("Welcome to the GIFT Course Assignment Simulator.")
@@ -32,19 +32,9 @@ for simulation in range(0, number_of_simulations):
     sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
     sys.stdout.flush()  # Ensure it appears immediately
     df_dict = run_assignment_simulation(course_times, all_courses, students, df_dict)
-  
 
+csv_out = get_csv_output(df_dict, config["output_file_path"])
 print()
-data_scores = [key for key, value in df_dict.items()]
-if not data_scores:
-    exit("No successful attempts within parameters. Please broaden parameters to increase sucsess chance")
-print("Accepted average scores:  " + str(data_scores))
-
-print(min(data_scores))
-output_df = pd.DataFrame(df_dict[min(data_scores)])
-
-output_df.to_csv(r"C:\Users\JcesW\Desktop\SUMMER GIFT4.csv", index=False)
-print("CSV Created")
 
 finish = t.perf_counter()
-print(f"In {finish - start :.6f} s")
+print(f"In {finish - start :.2f} s")
