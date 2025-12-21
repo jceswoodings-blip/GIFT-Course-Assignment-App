@@ -7,29 +7,6 @@ import time as t
 from JSON import load_config
 from Classes import Student, Course
 
-config = load_config('Config.json')
-
-
-df = pd.read_csv(r"C:\Users\JcesW\Desktop\October 2025 weeker crunch sheet v2.csv")  # df is short for DataFrame
-# Should ask user to input file path instead of hardcoding it (config file?)
-
-df.iloc[:, 1:] = df.iloc[:, 1:].replace({"st|nd|rd|th": ""}, regex=True)   # replaces suffixes in preference values
-df.columns = df.columns.str.replace(r"Question| \[|\[|\]", "", regex=True)  # replaces wierd stuff in column names
-# print(df.columns)  # debug
-# print(df)          # debug
-df_dict = {}  # dictionary to store dataframes and satisfaction scores of each attempt  { avg satisfaction score : dataframe }
-
-print("Welcome to the Gift/P4HE Course assignment program.")
-# command = str(input("Enter RUN to run and OPTIONS to open the options menu"))  # future feature?
-while True:
-    number_of_simulations = input("Enter a number of attempts (100000 recommended): ")
-    if number_of_simulations.isdigit():
-        number_of_simulations = int(number_of_simulations)
-        break
-    else:
-        print("Please enter only whole numbers with no other spaces or symbols.")
-start = t.perf_counter()  # start benchmark timer
-
 def assign_course_maximums(maximums: dict, course_names: list) -> list:
     # maximums is a dictionary of {course name: student maximum}
     return [Course(i, maximums[i]) for i in course_names if "_" not in i]
@@ -62,6 +39,31 @@ def avg_sat_score(students: list) -> float:
         student_count += 1
     mean_score = round(float(mean_score / student_count), 3)
     return mean_score
+
+config = load_config('Config.json')
+
+
+df = pd.read_csv(r"C:\Users\JcesW\Desktop\October 2025 weeker crunch sheet v2.csv")  # df is short for DataFrame
+# Should ask user to input file path instead of hardcoding it (config file?)
+
+df.iloc[:, 1:] = df.iloc[:, 1:].replace({"st|nd|rd|th": ""}, regex=True)   # replaces suffixes in preference values
+df.columns = df.columns.str.replace(r"Question| \[|\[|\]", "", regex=True)  # replaces wierd stuff in column names
+# print(df.columns)  # debug
+# print(df)          # debug
+df_dict = {}  # dictionary to store dataframes and satisfaction scores of each attempt  { avg satisfaction score : dataframe }
+
+print("Welcome to the Gift/P4HE Course assignment program.")
+# command = str(input("Enter RUN to run and OPTIONS to open the options menu"))  # future feature?
+while True:
+    number_of_simulations = input("Enter a number of attempts (100000 recommended): ")
+    if number_of_simulations.isdigit():
+        number_of_simulations = int(number_of_simulations)
+        break
+    else:
+        print("Please enter only whole numbers with no other spaces or symbols.")
+start = t.perf_counter()  # start benchmark timer
+
+
 
 # Creating all objects, sorting courses into time slots, creating dictionaries for objects to be accessed via name
 course_times = [[]] # 2D list of courses, each sublist is a time slot containing all courses in that slot
@@ -188,15 +190,6 @@ for simulation in range(0, number_of_simulations):
             value.append("")
         df_dict.update({avg_sat_score(students): data})
 
-    
-    # for course in all_courses:
-    #     course.assigned_students.clear()
-    #     course.student_count = 0
-    # for student in students:
-    #     student.assigned_courses.clear()
-    #     student.satisfaction_score = 0
-    
-  
 
 print()
 data_scores = [key for key, value in df_dict.items()]
