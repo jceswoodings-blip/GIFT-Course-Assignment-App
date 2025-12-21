@@ -1,4 +1,3 @@
-import sys
 import random
 
 def create_flag_column(data: dict, flag_dict: dict, message: str, score_type: str, dict_students: dict) -> dict:
