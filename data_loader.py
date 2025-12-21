@@ -1,7 +1,15 @@
 import pandas as pd
 from Classes import Student, Course
 
-def load_data(file_path: str):
+def load_data(file_path: str) -> tuple[list, list, list]:
+    """
+    Docstring for load_data()
+    load student and course data from a csv file to a pandas Dataframe, then format and create objects.
+    
+    :param file_path: file path for source csv file
+    :type file_path: str
+    """
+
     def Build_courses(maximums: dict, course_names: list) -> list:
         # maximums is a dictionary of {course object: student maximum}
         return [Course(i, maximums[i]) for i in course_names if "_" not in i]
