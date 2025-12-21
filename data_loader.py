@@ -1,5 +1,4 @@
 import pandas as pd
-import time as t
 from Classes import Student, Course
 
 def load_data(file_path: str):
@@ -40,7 +39,16 @@ def load_data(file_path: str):
     all_courses = Build_courses(maximums, all_courses)  # now list of course objects
 
     # all course/student objects can be accessed by their name attributes  /\
-    return tuple(course_times, all_courses, students)
+    return tuple((course_times, all_courses, students))
+
+if __name__ == "__main__":
+    # test module
+    data = load_data("Source Format Example.csv")
+    for i in data:
+        print(i)
+        print("\n")
+    # returns tuple:
+    # (2d list, list, list)
 
 # vars:
     # df                   local only         
