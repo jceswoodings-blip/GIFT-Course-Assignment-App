@@ -28,7 +28,7 @@ def avg_sat_score(students: list) -> float:
 
 
 
-def run_assignment_simulation(course_times: list, all_courses: list, students: list, df_dict: dict) -> dict:
+def run_assignment_simulation(course_times: list, all_courses: list, students: list, df_dict: dict, config: dict) -> dict:
     
     dict_courses = {course_object.name: course_object for course_object in all_courses}
     dict_students = {student_object.name: student_object for student_object in students}
@@ -80,8 +80,11 @@ def run_assignment_simulation(course_times: list, all_courses: list, students: l
                         break
 
                 student.assigned_courses.add(get_base_course_name (best_course.name))
-                if best_preference >= 5:
-                    rank_flags.append({student.name: best_course.name})
+                if best_preference >= config["rank_flag_threshold"]:
+                    if config["permit_samples_with_rank_flag"] == True:
+                        rank_flags.append({student.name: best_course.name})
+                    else:
+                        return df_dict
                 best_course.assigned_students.append(student.name)
                 best_course.student_count += 1
                 student.satisfaction_score += best_preference
@@ -90,7 +93,11 @@ def run_assignment_simulation(course_times: list, all_courses: list, students: l
     for student in students:
         # print(f"Test: {student.name}   SatScore: {student.satisfaction_score}")
         if student.satisfaction_score > 2*int(len(course_times))+2:  # 2 x time slots + 2
-            satisfaction_score_flags.append({student.name: student.satisfaction_score})
+            if config["permit_samples_with_satisfaction_flag"] == True:
+                satisfaction_score_flags.append({student.name: student.satisfaction_score})        
+            else:
+                return df_dict
+            
 
 
     # =====================================================================================================================

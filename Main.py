@@ -33,7 +33,7 @@ if __name__ == "__main__":
     for simulation in range(0, number_of_simulations):
         sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
         sys.stdout.flush()  # Ensure it appears immediately
-        df_dict = run_assignment_simulation(course_times, all_courses, students, df_dict)
+        df_dict = run_assignment_simulation(course_times, all_courses, students, df_dict, config)
 
     csv_out = get_csv_output(df_dict, config["output_file_path"])
     print()
