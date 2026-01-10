@@ -26,7 +26,7 @@ def worker(x):
     course_times, all_courses, students, df_dict, config = init_worker()
     return run_assignment_simulation(course_times, all_courses, students, df_dict, config)
 
-if __name__ == "__main__":
+def main():
     print(mp.cpu_count())
     print("Welcome to the GIFT Course Assignment Simulator.")
     print("Please ensure that configurations in 'Config.json' are correct and saved before proceeding.")
@@ -79,3 +79,6 @@ if __name__ == "__main__":
 
     finish = t.perf_counter()
     print(f"In {finish - start :.2f} s")
+
+if __name__ == "__main__":
+    main()
