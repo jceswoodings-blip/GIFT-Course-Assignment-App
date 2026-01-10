@@ -7,6 +7,25 @@ from data_loader import load_data
 from assignment_algorithm import run_assignment_simulation
 from get_output import get_csv_output
 
+course_times = None
+all_courses = None
+students = None
+df_dict = None
+config = None
+
+def init_worker(a,b,c,d,e,):
+    global course_times
+    global all_courses
+    global students
+    global df_dict
+    global config
+    course_times, all_courses, students, df_dict, config = a,b,c,d,e
+    
+
+def worker(x):
+    course_times, all_courses, students, df_dict, config = init_worker()
+    return run_assignment_simulation(course_times, all_courses, students, df_dict, config)
+
 if __name__ == "__main__":
     print(mp.cpu_count())
     print("Welcome to the GIFT Course Assignment Simulator.")
@@ -29,6 +48,26 @@ if __name__ == "__main__":
     dict_courses = {course_object.name: course_object for course_object in all_courses}
     dict_students = {student_object.name: student_object for student_object in students}
     # all course/student objects can be accessed by their name attributes  /\
+    # pickle_req = 0
+    # print(sys.getsizeof((course_times, all_courses, students, df_dict, config)))
+    # print(sys.getsizeof(loaded_data))
+    # for i in all_courses:
+    #     pickle_req += sys.getsizeof(i)
+    # for i in course_times:
+    #     pickle_req += sys.getsizeof(i)    
+    # for i in students:
+    #     pickle_req += sys.getsizeof(i)
+    # for i in df_dict:
+    #     pickle_req += sys.getsizeof(i)
+    # for i in config:
+    #     pickle_req += sys.getsizeof(i) 
+    # print(pickle_req)  
+    # exit(code="DW bro")
+
+    # with mp.Pool(processes=None, initializer=None, initargs=(None)) as pool:
+    #     for result in pool.imap_unordered(test, range(number_of_simulations)):
+    #         pass
+
 
     for simulation in range(0, number_of_simulations):
         sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
