@@ -42,7 +42,7 @@ def avg_sat_score(students: list) -> float:
 
 
 
-def run_assignment_simulation(): #course_times: list, all_courses: list, students: list, df_dict: dict, config: dict) -> dict:
+def run_assignment_simulation()-> tuple: #course_times: list, all_courses: list, students: list, df_dict: dict, config: dict) -> dict:
     
     global course_times
     global all_courses
@@ -152,4 +152,4 @@ def run_assignment_simulation(): #course_times: list, all_courses: list, student
         except KeyError:  # no participants for course
             value.append("")
         df_dict.update({avg_sat_score(students): data})
-    return df_dict
+    return (avg_sat_score(students), data,)

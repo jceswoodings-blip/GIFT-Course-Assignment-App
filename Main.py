@@ -7,19 +7,13 @@ from data_loader import load_data
 from assignment_algorithm import run_assignment_simulation, init_worker
 from get_output import get_csv_output
 
-# course_times = None
-# all_courses = None
-# students = None
-# df_dict = None
-# config = None
 
-# def init_worker(a,b,c,d,e,):
-#     global course_times
-#     global all_courses
-#     global students
-#     global df_dict
-#     global config
-#     course_times, all_courses, students, df_dict, config = a,b,c,d,e
+def memory_check(data: iter) -> int:
+    bytes = 0
+    bytes += sys.getsizeof(data)
+    for i in data:
+        bytes += sys.getsizeof(i)
+    return bytes
     
 
 def worker(x):
@@ -44,41 +38,33 @@ def main():
 
     # =====================================================================================================================
     df_dict = {}  # dictionary to store dataframes and satisfaction scores of each attempt  { avg satisfaction score : dataframe }
-    dict_courses = {course_object.name: course_object for course_object in all_courses}
-    dict_students = {student_object.name: student_object for student_object in students}
+    # dict_courses = {course_object.name: course_object for course_object in all_courses}
+    # dict_students = {student_object.name: student_object for student_object in students}
     # all course/student objects can be accessed by their name attributes  /\
-    # pickle_req = 0
-    # print(sys.getsizeof((course_times, all_courses, students, df_dict, config)))
-    # print(sys.getsizeof(loaded_data))
-    # for i in all_courses:
-    #     pickle_req += sys.getsizeof(i)
-    # for i in course_times:
-    #     pickle_req += sys.getsizeof(i)    
-    # for i in students:
-    #     pickle_req += sys.getsizeof(i)
-    # for i in df_dict:
-    #     pickle_req += sys.getsizeof(i)
-    # for i in config:
-    #     pickle_req += sys.getsizeof(i) 
-    # print(pickle_req)  
-    # exit(code="DW bro")
-
+    best = (1000,)
+    simulation = 0
     with mp.Pool(processes=mp.cpu_count(), initializer=init_worker, initargs=(course_times, all_courses, students, df_dict, config)) as pool:
-        for result in pool.imap_unordered(worker, range(number_of_simulations), chunksize=100):
-            pass
+        for result in pool.imap_unordered(worker, range(number_of_simulations), chunksize=1000):
+            simulation += 1
+            if (simulation / number_of_simulations):
+                pass 
+            # sys.stdout.write(f"\r{simulation} samples created   {((simulation)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
+            # sys.stdout.flush()  # Ensure it appears immediately
+            if best == False or result[0] < best[0]:
+                best = result
     print("Win?")
-
+    print(best)
     # for simulation in range(0, number_of_simulations):
     #     sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
     #     sys.stdout.flush()  # Ensure it appears immediately
     #     df_dict = run_assignment_simulation(course_times, all_courses, students, df_dict, config)
     finish = t.perf_counter()
     print(f"In {finish - start :.2f} s")
-    csv_out = get_csv_output(df_dict, config["output_file_path"])
+    get_csv_output(best[1], config["output_file_path"])
     print()
     
     finish = t.perf_counter()
     print(f"In {finish - start :.2f} s")
-    return csv_out
+
 if __name__ == "__main__":
     main()
