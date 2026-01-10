@@ -38,10 +38,8 @@ def main():
 
     # =====================================================================================================================
     df_dict = {}  # dictionary to store dataframes and satisfaction scores of each attempt  { avg satisfaction score : dataframe }
-    # dict_courses = {course_object.name: course_object for course_object in all_courses}
-    # dict_students = {student_object.name: student_object for student_object in students}
     # all course/student objects can be accessed by their name attributes  /\
-    best = (1000,)
+    best = False
     simulation = 0
     with mp.Pool(processes=mp.cpu_count(), initializer=init_worker, initargs=(course_times, all_courses, students, df_dict, config)) as pool:
         for result in pool.imap_unordered(worker, range(number_of_simulations), chunksize=1000):
@@ -50,7 +48,9 @@ def main():
                 pass 
             # sys.stdout.write(f"\r{simulation} samples created   {((simulation)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
             # sys.stdout.flush()  # Ensure it appears immediately
-            if best == False or result[0] < best[0]:
+            if best == False:
+                best = result
+            elif result[0] < best[0]: 
                 best = result
     print("Win?")
     print(best)
@@ -58,8 +58,8 @@ def main():
     #     sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
     #     sys.stdout.flush()  # Ensure it appears immediately
     #     df_dict = run_assignment_simulation(course_times, all_courses, students, df_dict, config)
-    finish = t.perf_counter()
-    print(f"In {finish - start :.2f} s")
+    # finish = t.perf_counter()
+    # print(f"In {finish - start :.2f} s")
     get_csv_output(best[1], config["output_file_path"])
     print()
     

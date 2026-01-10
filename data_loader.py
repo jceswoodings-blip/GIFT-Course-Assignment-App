@@ -21,8 +21,6 @@ def load_data(file_path: str) -> tuple[list, list, list]:
 
     df.iloc[:, 1:] = df.iloc[:, 1:].replace({"st|nd|rd|th": ""}, regex=True)   # replaces suffixes in preference values
     df.columns = df.columns.str.replace(r"Question| \[|\[|\]", "", regex=True)  # replaces wierd stuff in column names
-    # print(df.columns)  # debug
-    # print(df)          # debug
 
     # Creating all objects, sorting courses into time slots, creating dictionaries for objects to be accessed via name
     course_times = [[]] # 2D list of courses, each sublist is a time slot containing all courses in that slot
