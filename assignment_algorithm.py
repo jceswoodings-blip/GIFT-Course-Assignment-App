@@ -1,5 +1,19 @@
 import random
 
+course_times = None
+all_courses = None
+students = None
+df_dict = None
+config = None
+
+def init_worker(a,b,c,d,e,):
+    global course_times
+    global all_courses
+    global students
+    global df_dict
+    global config
+    course_times, all_courses, students, df_dict, config = a,b,c,d,e
+
 def create_flag_column(data: dict, flag_dict: dict, message: str, score_type: str, dict_students: dict) -> dict:
     if score_type == "Rank":
         data.update({message:
@@ -28,8 +42,14 @@ def avg_sat_score(students: list) -> float:
 
 
 
-def run_assignment_simulation(course_times: list, all_courses: list, students: list, df_dict: dict, config: dict) -> dict:
+def run_assignment_simulation(): #course_times: list, all_courses: list, students: list, df_dict: dict, config: dict) -> dict:
     
+    global course_times
+    global all_courses
+    global students
+    global df_dict
+    global config
+
     dict_courses = {course_object.name: course_object for course_object in all_courses}
     dict_students = {student_object.name: student_object for student_object in students}
 

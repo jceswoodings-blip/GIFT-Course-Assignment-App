@@ -4,27 +4,26 @@ import multiprocessing as mp
 
 from JSON import load_config
 from data_loader import load_data
-from assignment_algorithm import run_assignment_simulation
+from assignment_algorithm import run_assignment_simulation, init_worker
 from get_output import get_csv_output
 
-course_times = None
-all_courses = None
-students = None
-df_dict = None
-config = None
+# course_times = None
+# all_courses = None
+# students = None
+# df_dict = None
+# config = None
 
-def init_worker(a,b,c,d,e,):
-    global course_times
-    global all_courses
-    global students
-    global df_dict
-    global config
-    course_times, all_courses, students, df_dict, config = a,b,c,d,e
+# def init_worker(a,b,c,d,e,):
+#     global course_times
+#     global all_courses
+#     global students
+#     global df_dict
+#     global config
+#     course_times, all_courses, students, df_dict, config = a,b,c,d,e
     
 
 def worker(x):
-    course_times, all_courses, students, df_dict, config = init_worker()
-    return run_assignment_simulation(course_times, all_courses, students, df_dict, config)
+    return run_assignment_simulation()
 
 def main():
     print(mp.cpu_count())
@@ -64,21 +63,22 @@ def main():
     # print(pickle_req)  
     # exit(code="DW bro")
 
-    # with mp.Pool(processes=None, initializer=None, initargs=(None)) as pool:
-    #     for result in pool.imap_unordered(test, range(number_of_simulations)):
-    #         pass
+    with mp.Pool(processes=mp.cpu_count(), initializer=init_worker, initargs=(course_times, all_courses, students, df_dict, config)) as pool:
+        for result in pool.imap_unordered(worker, range(number_of_simulations), chunksize=100):
+            pass
+    print("Win?")
 
-
-    for simulation in range(0, number_of_simulations):
-        sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
-        sys.stdout.flush()  # Ensure it appears immediately
-        df_dict = run_assignment_simulation(course_times, all_courses, students, df_dict, config)
-
-    csv_out = get_csv_output(df_dict, config["output_file_path"])
-    print()
-
+    # for simulation in range(0, number_of_simulations):
+    #     sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
+    #     sys.stdout.flush()  # Ensure it appears immediately
+    #     df_dict = run_assignment_simulation(course_times, all_courses, students, df_dict, config)
     finish = t.perf_counter()
     print(f"In {finish - start :.2f} s")
-
+    csv_out = get_csv_output(df_dict, config["output_file_path"])
+    print()
+    
+    finish = t.perf_counter()
+    print(f"In {finish - start :.2f} s")
+    return csv_out
 if __name__ == "__main__":
     main()
