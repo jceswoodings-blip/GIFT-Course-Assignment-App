@@ -42,13 +42,20 @@ def avg_sat_score(students: list) -> float:
 
 
 
-def run_assignment_simulation()-> tuple: #course_times: list, all_courses: list, students: list, df_dict: dict, config: dict) -> dict:
+def run_assignment_simulation(*args)-> tuple: #course_times: list, all_courses: list, students: list, df_dict: dict, config: dict) -> dict:
     
-    global course_times
-    global all_courses
-    global students
-    global df_dict
-    global config
+    if not (args):
+        global course_times
+        global all_courses
+        global students
+        global df_dict
+        global config
+    else:
+        course_times = args[0]
+        all_courses = args[1]
+        students = args[2]
+        df_dict = args[3]
+        config = args[4]
 
     dict_courses = {course_object.name: course_object for course_object in all_courses}
     dict_students = {student_object.name: student_object for student_object in students}

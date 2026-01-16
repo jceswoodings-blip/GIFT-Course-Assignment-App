@@ -2,6 +2,7 @@
     "number_of_simulations": 10000,
     "source_file_path": "C:\\Users\\JcesW\\Desktop\\October 2025 weeker crunch sheet v2.csv",
     "output_file_path": "C:\\Users\\JcesW\\Desktop\\Course Assignments.csv",
+    "allow_multiprocessing": true,
     "rank_flag_threshold": 5,
     "permit_samples_with_rank_flag": true,
     "satisfaction_flag_threshold": 10,
