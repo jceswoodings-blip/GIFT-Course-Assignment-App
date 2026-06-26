@@ -8,7 +8,7 @@ def Remove_last_names(name: str) -> str:
     parts = name.split(" ")
     if parts[0].capitalize() == "Angus":
         parts[0] = "Gus"
-    return f"{parts[0].capitalize()} {parts[1][0].upper()}" if len(parts) > 1 else parts[0].capitalize()
+    return f"{parts[0].capitalize()}" if len(parts) > 1 else parts[0].capitalize() # {parts[1][0].upper()}
 
 def Apply_format_to_df(df: pd.DataFrame) -> pd.DataFrame:
     # iterate over each df column and map the Remove_last_names function to each value (list of participants)
