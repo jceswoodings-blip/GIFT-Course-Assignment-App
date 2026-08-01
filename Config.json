@@ -1,7 +1,7 @@
 {
     "number_of_simulations": 100000,
-    "source_file_path": "C:\\Users\\JcesW\\Desktop\\April 2026 Weekender Course Preferences (Responses).csv",
-    "output_file_path": "C:\\Users\\JcesW\\Desktop\\April Course Assignments5.csv",
+    "source_file_path": "C:\\Users\\JcesW\\Desktop\\2026 Weeker Course Preferences (Responses) - Form Responses 1.csv",
+    "output_file_path": "C:\\Users\\JcesW\\Desktop\\2026 Weeker Assignments No Histotry All Keepers.csv",
     "allow_multiprocessing": true,
     "rank_flag_threshold": 5,
     "permit_samples_with_rank_flag": true,

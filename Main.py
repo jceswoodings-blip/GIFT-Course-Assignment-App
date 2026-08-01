@@ -44,10 +44,9 @@ def main():
         with mp.Pool(processes=mp.cpu_count(), initializer=init_worker, initargs=(course_times, all_courses, students, df_dict, config)) as pool:
             for result in pool.imap_unordered(worker, range(number_of_simulations), chunksize=1000):
                 simulation += 1
-                if (simulation / number_of_simulations):
-                    pass 
-                sys.stdout.write(f"\r{simulation} samples created   {((simulation)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
-                sys.stdout.flush()  # Ensure it appears immediately
+                if simulation % 10 == 0:
+                    sys.stdout.write(f"\r{simulation} samples created   {((simulation)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
+                    sys.stdout.flush()  # Ensure it appears immediately
                 if best == False:
                     best = result
                 elif result[0] < best[0]: 
@@ -57,8 +56,9 @@ def main():
     if config["allow_multiprocessing"] == False:
         best = False
         for simulation in range(0, number_of_simulations):
-            sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
-            sys.stdout.flush()  # Ensure it appears immediately
+            if simulation % 100 == 0:
+                 sys.stdout.write(f"\r{simulation + 1} samples created   {((simulation+1)/number_of_simulations)*100:.2f}% Complete")  # doesn't force newline
+                 sys.stdout.flush()  # Ensure it appears immediately
             result = run_assignment_simulation(course_times, all_courses, students, df_dict, config)
             if best == False:
                     best = result
