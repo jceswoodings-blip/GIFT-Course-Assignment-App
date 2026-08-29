@@ -18,7 +18,7 @@ def worker(x):
     return run_assignment_simulation()
 
 def main():
-    print(mp.cpu_count())
+    print(f"{mp.cpu_count()} CPU cores availible")
     print("Welcome to the GIFT Course Assignment Simulator.")
     print("Please ensure that configurations in 'Config.json' are correct and saved before proceeding.")
     input("Press Enter to begin...")
